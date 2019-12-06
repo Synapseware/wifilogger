@@ -31,6 +31,8 @@ const char* password = STAPSK;
 
 const uint8_t SENSOR = D1;
 const uint8_t LED_PIN = D2;
+const uint8_t ERR_PIN = D3;
+
 char msg[256];
 
 OneWire ds(SENSOR);
@@ -57,6 +59,10 @@ AdafruitIO_Feed * temperatureFeed = io.feed("temperature");
 void setup()
 {
   pinMode(LED_PIN, OUTPUT);
+  pinMode(ERR_PIN, OUTPUT);
+
+  digitalWrite(LED_PIN, 0);
+  digitalWrite(ERR_PIN, 0);
 
   Serial.begin(115200);
   delay(1000);
@@ -66,11 +72,13 @@ void setup()
 
   Serial.print("Connecting to AdafruitIO");
   io.connect();
+  digitalWrite(ERR_PIN, 1);
   while (io.status() < AIO_CONNECTED)
   {
     Serial.print(".");
     delay(500);
   }
+  digitalWrite(ERR_PIN, 0);
 
   Serial.println();
   Serial.println(io.statusText());
